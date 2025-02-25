@@ -1,27 +1,42 @@
 "use client";
+import { useState } from "react";
 import classes from "./NewPost.module.css";
 
-function NewPost(props: {
-  onNameChange: (name: string) => void;
-  onTextChange: (text: string) => void;
-}) {
-  function changeTextHandler(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    props.onTextChange(event.target.value);
-  }
+function NewPost({ onCancel }: { onCancel: () => void }) {
+  const [enteredBody, setEnteredName] = useState("");
+  const [enteredAuthor, setEnteredText] = useState("");
 
-  function changeNameHandler(event: React.ChangeEvent<HTMLInputElement>) {
-    props.onNameChange(event.target.value);
-  }
+  const changeBodyHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEnteredName(event.target.value);
+  };
 
+  const changeTextHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setEnteredText(event.target.value);
+  };
+
+  function onSubmitHandler(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const postData = {
+      body: enteredBody,
+      auther: enteredAuthor,
+    };
+    console.log(postData);
+  }
   return (
-    <form className={classes.form}>
+    <form className={classes.form} onSubmit={onSubmitHandler}>
       <p>
         <label htmlFor="name">Your name</label>
-        <input type="text" id="name" required onChange={changeNameHandler} />
+        <input type="text" id="name" required onChange={changeBodyHandler} />
       </p>
       <p>
         <label htmlFor="body">Text</label>
         <textarea id="body" required rows={3} onChange={changeTextHandler} />
+      </p>
+      <p className={classes.actions}>
+        <button type="button" onClick={onCancel}>
+          Cancel
+        </button>
+        <button>Submit</button>
       </p>
     </form>
   );
