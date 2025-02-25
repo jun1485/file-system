@@ -1,9 +1,15 @@
 import classes from "./Modal.module.css";
 
-export default function Modal({ children }: { children: React.ReactNode }) {
+export default function Modal({
+  children,
+  onClose,
+}: {
+  children: React.ReactNode;
+  onClose: () => void;
+}) {
   return (
     <>
-      <div className={classes.backdrop} />
+      <div onClick={onClose} className={classes.backdrop} />
       <dialog open className={classes.modal}>
         {children}
       </dialog>

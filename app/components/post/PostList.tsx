@@ -7,6 +7,7 @@ import classes from "./PostsList.module.css";
 import Modal from "./Modal";
 
 export default function PostList() {
+  const [showModal, setShowModal] = useState(true);
   const [enteredName, setEnteredName] = useState("");
   const [enteredText, setEnteredText] = useState("");
 
@@ -18,14 +19,21 @@ export default function PostList() {
     setEnteredText(text);
   };
 
+  const hideModalHandler = () => {
+    setShowModal(false);
+  };
+
   return (
     <>
-      <Modal>
-        <NewPost
-          onNameChange={changeNameHandler}
-          onTextChange={changeTextHandler}
-        />
-      </Modal>
+      {showModal && (
+        <Modal onClose={hideModalHandler}>
+          <NewPost
+            onNameChange={changeNameHandler}
+            onTextChange={changeTextHandler}
+          />
+        </Modal>
+      )}
+
       <ul className={classes.posts}>
         <Post author={enteredName} text={enteredText} />
         <Post author="Jun2" text="Hello2" />
