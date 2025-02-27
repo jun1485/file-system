@@ -2,7 +2,13 @@
 import { useState } from "react";
 import classes from "./NewPost.module.css";
 
-function NewPost({ onCancel }: { onCancel: () => void }) {
+function NewPost({
+  onCancel,
+  onAddPost,
+}: {
+  onCancel: () => void;
+  onAddPost: (postData: { body: string; author: string }) => void;
+}) {
   const [enteredBody, setEnteredName] = useState("");
   const [enteredAuthor, setEnteredText] = useState("");
 
@@ -18,9 +24,10 @@ function NewPost({ onCancel }: { onCancel: () => void }) {
     event.preventDefault();
     const postData = {
       body: enteredBody,
-      auther: enteredAuthor,
+      author: enteredAuthor,
     };
-    console.log(postData);
+    onAddPost(postData);
+    onCancel();
   }
   return (
     <form className={classes.form} onSubmit={onSubmitHandler}>
