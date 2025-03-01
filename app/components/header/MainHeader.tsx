@@ -1,20 +1,27 @@
-import { MdPostAdd, MdMessage } from "react-icons/md";
+import Link from "next/link";
 
 import classes from "./MainHeader.module.css";
+import Image from "next/image";
+import logo from "@/app/assets/logo.png";
 
-function MainHeader({ onCreatePost }: { onCreatePost: () => void }) {
+function MainHeader() {
   return (
     <header className={classes.header}>
-      <h1 className={classes.logo}>
-        <MdMessage />
-        React Poster
-      </h1>
-      <p>
-        <button className={classes.button} onClick={onCreatePost}>
-          <MdPostAdd size={18} />
-          New Post
-        </button>
-      </p>
+      <Link className={classes.logo} href="/">
+        <Image src={logo} alt="logo" width={100} height={100} priority />
+        Foodie
+      </Link>
+
+      <nav className={classes.nav}>
+        <ul>
+          <li>
+            <Link href="/meals">Meals</Link>
+          </li>
+          <li>
+            <Link href="/community">Community</Link>
+          </li>
+        </ul>
+      </nav>
     </header>
   );
 }
