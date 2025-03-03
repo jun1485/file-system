@@ -3,6 +3,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 2rem 1rem;
+  background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 @media (min-width: 768px) {
@@ -19,30 +21,6 @@
   gap: 1.5rem;
   /* font-family: 'Montserrat', sans-serif; */
   font-size: 1.25rem;
-}
-
-.nav a {
-  text-decoration: none;
-  color: #ddd6cb;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-}
-
-.nav a:hover,
-.nav a:active {
-  background: linear-gradient(90deg, #ff8a05, #f9b331);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 18px rgba(248, 190, 42, 0.8);
-}
-
-.active {
-  background: linear-gradient(90deg, #ff8a05, #f9b331);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 .logo {
