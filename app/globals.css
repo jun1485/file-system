@@ -5,6 +5,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --brown-background: #8a3b00;
+  --dark-background: #1e2124;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,7 +17,78 @@
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  margin: 0;
+  padding: 0;
+  color: #ffffff;
   font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  background: #1e2124;
+}
+
+/* 상단 갈색 배경 */
+.wave-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 15%;
+  background: #8a3b00;
+  z-index: -2;
+}
+
+/* 물결 모양 경계선 */
+.wave-divider {
+  position: fixed;
+  top: 15%;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z' fill='%238a3b00'%3E%3C/path%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  z-index: -1;
+}
+
+/* SVG 파일을 직접 HTML에 포함시키기 위한 스타일 */
+.wave-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  z-index: -100;
+  visibility: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Montserrat", sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 스크롤바 스타일 */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e2124;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8a3b00;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff8a05;
 }

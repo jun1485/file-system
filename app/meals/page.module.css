@@ -1,14 +1,21 @@
 .header {
   gap: 3rem;
-  margin: 3rem auto 5rem auto;
+  margin: 0 auto;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
   width: 90%;
   max-width: 75rem;
-  color: #ddd6cb;
+  color: #ffffff;
   font-size: 1.5rem;
+  text-align: center;
+  position: relative;
+  z-index: 10;
 }
 
 .header h1 {
   font-family: "Montserrat", sans-serif;
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
 }
 
 .highlight {
@@ -20,22 +27,41 @@
 
 .header p {
   margin: 0;
+  margin-bottom: 1rem;
 }
 
 .cta a {
   display: inline-block;
   margin-top: 1rem;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
   background: linear-gradient(90deg, #f9572a, #ff9b05);
   color: #ffffff;
   font-weight: bold;
   text-decoration: none;
+  font-size: 1.2rem;
+}
+
+.cta a:hover {
+  background: linear-gradient(90deg, #ff8a05, #f9572a);
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
+
+.main {
+  width: 90%;
+  max-width: 75rem;
+  margin: 0 auto;
+  padding: 2rem 0;
+  position: relative;
+  z-index: 10;
 }
 
 .loading {
   text-align: center;
   animation: loading 1.2s ease-in-out infinite;
+  color: #ffffff;
+  font-size: 1.5rem;
 }
 
 @keyframes loading {
