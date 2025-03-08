@@ -1,9 +1,13 @@
+"use client";
+
 import { shareMeal } from "@/lib/action";
 import ImagePicker from "./ImagePicker";
 import classes from "./page.module.css";
 import FormSubmitButton from "./FormSubmitButton";
+import { useState } from "react";
 
 export default function ShareMealPage() {
+  const [error, setError] = useState<string | null>(null);
   return (
     <>
       <header className={classes.header}>
@@ -13,7 +17,16 @@ export default function ShareMealPage() {
         <p>Or any other meal you feel needs sharing!</p>
       </header>
       <main className={classes.main}>
-        <form className={classes.form} action={shareMeal}>
+        <form
+          className={classes.form}
+          action={async (formData) => {
+            try {
+              await shareMeal(formData);
+            } catch (error) {
+              setError(error instanceof Error ? error.message : "에러 발생");
+            }
+          }}
+        >
           <div className={classes.row}>
             <p>
               <label htmlFor="name">Your name</label>
@@ -39,10 +52,11 @@ export default function ShareMealPage() {
               name="instructions"
               rows={10}
               required
-            ></textarea>
+            />
           </p>
           <ImagePicker label="Your image" name="image" />
           <p className={classes.actions}>
+            {error && <p className={classes.error}>{error}</p>}
             <FormSubmitButton />
           </p>
         </form>
