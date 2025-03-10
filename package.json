@@ -3,10 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "foodie": "pnpm --filter foodie dev",
+    "routing": "pnpm --filter routing dev",
+    "build:foodie": "pnpm --filter foodie build",
+    "build:routing": "pnpm --filter routing build",
+    "start:foodie": "pnpm --filter foodie start",
+    "start:routing": "pnpm --filter routing start"
   },
   "dependencies": {
     "better-sqlite3": "^7.6.2",

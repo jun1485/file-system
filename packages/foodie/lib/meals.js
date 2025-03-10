@@ -13,7 +13,7 @@ if (!fs.existsSync(dataDir)) {
 
 // 초기 meals.json 파일이 없으면 샘플 데이터로 생성
 if (!fs.existsSync(mealsFile)) {
-  fs.writeFileSync(mealsFile, JSON.stringify(), "utf8");
+  fs.writeFileSync(mealsFile, JSON.stringify([]), "utf8");
 }
 
 function readMealsData() {
@@ -32,7 +32,7 @@ export async function getMeals() {
 
 export async function getMeal(slug) {
   const meals = readMealsData();
-  return meals.find(eal > meal.slug === slug);
+  return meals.find((meal) => meal.slug === slug);
 }
 
 export async function saveMeal(meal) {

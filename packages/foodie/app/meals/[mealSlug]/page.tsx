@@ -3,6 +3,7 @@ import classes from "./page.module.css";
 import { getMeal } from "@/lib/meals";
 import MealNotFound from "../NotFound";
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 type Props = {
   params: Promise<{
@@ -13,6 +14,10 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { mealSlug } = await params;
   const meal = await getMeal(mealSlug);
+
+  if (!meal) {
+    notFound();
+  }
   return {
     title: meal?.title || "Meal Details",
     description: meal?.summary,
