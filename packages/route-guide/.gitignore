@@ -1,0 +1,19 @@
+# Next.js
+/.next/
+.next/
+out/
+
+# 의존성 패키지
+/node_modules
+
+# 환경 변수 파일
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 기타 로그 파일 등
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
