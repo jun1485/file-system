@@ -1,7 +1,20 @@
+import Link from "next/link";
+import { DUMMY_NEWS } from "./dummy/dummy-news";
+
 export default function HomePage() {
   return (
-    <div id="home">
-      <h1>Next.js Routing & Page Rendering</h1>
-    </div>
+    <>
+      <h1>News Page</h1>
+      <ul className="news-list">
+        {DUMMY_NEWS.map((news) => (
+          <li key={news.id}>
+            <Link href={`/news/${news.slug}`}>
+              <img src={`/images/news/${news.image}`} alt={news.title} />
+              <span>{news.title}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
