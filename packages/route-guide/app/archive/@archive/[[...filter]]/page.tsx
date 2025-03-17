@@ -1,5 +1,9 @@
 import { NewsList } from "@/app/components/news";
-import { getAvailableNewsYears, getNewsForYear } from "@/lib/news";
+import {
+  getAvailableNewsMonths,
+  getNewsForYear,
+  getNewsForYearAndMonth,
+} from "@/lib/news";
 import Link from "next/link";
 
 export default function FilteredNewsPage({
@@ -12,9 +16,16 @@ export default function FilteredNewsPage({
   const selectedMonth = filter?.[1];
 
   let news;
+  let months = getAvailableNewsMonths(selectedYear);
 
   if (selectedYear && !selectedMonth) {
     news = getNewsForYear(selectedYear);
+    months = getAvailableNewsMonths(selectedYear);
+  }
+
+  if (selectedYear && selectedMonth) {
+    news = getNewsForYearAndMonth(selectedYear, selectedMonth);
+    months = [];
   }
 
   let newsContent = <p>뉴스가 없습니다.</p>;
@@ -23,20 +34,23 @@ export default function FilteredNewsPage({
     newsContent = <NewsList news={news} />;
   }
 
-  const links = getAvailableNewsYears();
-
   return (
     <>
       <header id="archive-header">
         <nav>
           <ul>
-          {links.map((link) => (
-            <li key={link}>
-              <Link href={`/archive/${link}`}>{link}</Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
+            {months?.map((month) => {
+              const href = selectedYear
+                ? `/archive/${selectedYear}/${month}`
+                : `/archive/${month}`;
+              return (
+                <li key={month}>
+                  <Link href={href}>{month}</Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
       </header>
       {newsContent}
     </>
