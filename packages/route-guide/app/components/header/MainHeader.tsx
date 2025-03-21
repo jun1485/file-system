@@ -11,25 +11,38 @@ export default function MainHeader() {
       <nav>
         <ul>
           <li>
-            <Link href="/" className={pathname === "/" ? "active" : ""}>
+            <HeaderLink href="/" pathname={pathname}>
               Home
-            </Link>
+            </HeaderLink>
           </li>
           <li>
-            <Link href="/news" className={pathname === "/news" ? "active" : ""}>
+            <HeaderLink href="/news" pathname={pathname}>
               News
-            </Link>
+            </HeaderLink>
           </li>
           <li>
-            <Link
-              href="/archive"
-              className={pathname === "/archive" ? "active" : ""}
-            >
+            <HeaderLink href="/archive" pathname={pathname}>
               Archive
-            </Link>
+            </HeaderLink>
           </li>
         </ul>
       </nav>
     </header>
+  );
+}
+
+function HeaderLink({
+  href,
+  children,
+  pathname,
+}: {
+  href: string;
+  children: React.ReactNode;
+  pathname: string;
+}) {
+  return (
+    <Link href={href} className={pathname === href ? "active" : ""}>
+      {children}
+    </Link>
   );
 }
