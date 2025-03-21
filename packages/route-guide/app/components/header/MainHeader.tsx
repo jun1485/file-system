@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import NavLink from "./NavLink";
 
 export default function MainHeader() {
-  const pathname = usePathname();
   return (
     <header id="main-header">
       <div id="logo">
@@ -11,38 +10,16 @@ export default function MainHeader() {
       <nav>
         <ul>
           <li>
-            <HeaderLink href="/" pathname={pathname}>
-              Home
-            </HeaderLink>
+            <NavLink href="/">Home</NavLink>
           </li>
           <li>
-            <HeaderLink href="/news" pathname={pathname}>
-              News
-            </HeaderLink>
+            <NavLink href="/news">News</NavLink>
           </li>
           <li>
-            <HeaderLink href="/archive" pathname={pathname}>
-              Archive
-            </HeaderLink>
+            <NavLink href="/archive">Archive</NavLink>
           </li>
         </ul>
       </nav>
     </header>
-  );
-}
-
-function HeaderLink({
-  href,
-  children,
-  pathname,
-}: {
-  href: string;
-  children: React.ReactNode;
-  pathname: string;
-}) {
-  return (
-    <Link href={href} className={pathname === href ? "active" : ""}>
-      {children}
-    </Link>
   );
 }
