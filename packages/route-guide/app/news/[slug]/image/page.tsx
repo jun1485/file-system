@@ -14,8 +14,14 @@ export default function NewsImagePage({
   }
 
   return (
-    <div className="fullscreen-image">
-      <img src={`/images/news/${newsItemSlug}.jpg`} />
-    </div>
+    <>
+      <div className="modal-backdrop">
+        <dialog className="modal" open>
+          <div className="fullscreen-image">
+            <img src={`/images/news/${newsItemSlug}.jpg`} />
+          </div>
+        </dialog>
+      </div>
+    </>
   );
 }
