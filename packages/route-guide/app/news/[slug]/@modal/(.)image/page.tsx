@@ -1,7 +1,7 @@
 import { DUMMY_NEWS } from "@/app/dummy/dummy-news";
 import { notFound } from "next/navigation";
 
-export default function NewsImagePage({
+export default function InterceptedNewsImagePage({
   params,
 }: {
   params: { slug: string };
@@ -15,8 +15,12 @@ export default function NewsImagePage({
 
   return (
     <>
-      <div className="fullscreen-image">
-        <img src={`/images/news/${newsItemSlug}.jpg`} />
+      <div className="modal-backdrop">
+        <dialog className="modal" open>
+          <div className="fullscreen-image">
+            <img src={`/images/news/${newsItemSlug}.jpg`} />
+          </div>
+        </dialog>
       </div>
     </>
   );
