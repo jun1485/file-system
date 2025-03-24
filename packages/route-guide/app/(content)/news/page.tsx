@@ -1,5 +1,5 @@
+import { NewsList } from "@/app/components/news";
 import { getAllNews } from "@/lib/news";
-import { NewsList } from "../components/news";
 
 export default function NewsPage() {
   return (
