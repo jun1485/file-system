@@ -1,126 +1,122 @@
-import sqlite3 from "sqlite3";
-import { open } from "sqlite";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 
 // DB 연결 객체를 담을 변수
 let db;
 
-// DB 초기화 함수를 비동기로 변경
-async function initDb() {
-  // SQLite 연결 초기화
-  db = await open({
-    filename: "posts.db",
-    driver: sqlite3.Database,
-  });
-
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY, 
-      first_name TEXT, 
-      last_name TEXT,
-      email TEXT
-    )`);
-
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS posts (
-      id INTEGER PRIMARY KEY, 
-      image_url TEXT NOT NULL,
-      title TEXT NOT NULL, 
-      content TEXT NOT NULL, 
-      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-      user_id INTEGER, 
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-    )`);
-
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS likes (
-      user_id INTEGER, 
-      post_id INTEGER, 
-      PRIMARY KEY(user_id, post_id),
-      FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE, 
-      FOREIGN KEY(post_id) REFERENCES posts(id) ON DELETE CASCADE
-    )`);
-
-  // 사용자 수 확인
-  const userCount = await db.get("SELECT COUNT(*) AS count FROM users");
-
-  if (userCount.count === 0) {
-    await db.exec(`
-    INSERT INTO users (first_name, last_name, email)
-    VALUES ('John', 'Doe', 'john@example.com')
-    `);
-
-    await db.exec(`
-    INSERT INTO users (first_name, last_name, email)
-    VALUES ('Max', 'Schwarz', 'max@example.com')
-    `);
-  }
-}
-
-// 초기화 함수 실행
-(async () => {
-  await initDb();
-})();
-
 export async function getPosts(maxNumber) {
-  let limitClause = "";
+  let query = supabase
+    .from("posts")
+    .select(
+      `
+      id,
+      image_url as image,
+      title,
+      content,
+      created_at as createdAt,
+      users(first_name, last_name),
+      likes(count)
+    `
+    )
+    .order("created_at", { ascending: false });
 
   if (maxNumber) {
-    limitClause = "LIMIT ?";
+    query = query.limit(maxNumber);
   }
 
-  const query = `
-    SELECT posts.id, image_url AS image, title, content, created_at AS createdAt, first_name AS userFirstName, last_name AS userLastName, COUNT(likes.post_id) AS likes, EXISTS(SELECT * FROM likes WHERE likes.post_id = posts.id and likes.user_id = 2) AS isLiked
-    FROM posts
-    INNER JOIN users ON posts.user_id = users.id
-    LEFT JOIN likes ON posts.id = likes.post_id
-    GROUP BY posts.id
-    ORDER BY createdAt DESC
-    ${limitClause}`;
-
+  // 인위적인 지연 추가 (원래 코드와 동일하게 유지)
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  return maxNumber ? await db.all(query, [maxNumber]) : await db.all(query);
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("Error fetching posts:", error);
+    throw new Error("게시물을 가져오는 중 오류가 발생했습니다");
+  }
+
+  // 응답 데이터 형식 변환
+  return data.map((post) => ({
+    id: post.id,
+    image: post.image,
+    title: post.title,
+    content: post.content,
+    createdAt: post.createdAt,
+    userFirstName: post.users.first_name,
+    userLastName: post.users.last_name,
+    likes: post.likes.length,
+    // 현재 사용자 ID(2)가 좋아요를 눌렀는지 확인 (이 부분은 인증 로직에 따라 변경 필요)
+    isLiked: post.likes.some((like) => like.user_id === "2"),
+  }));
 }
 
 export async function storePost(post) {
-  const query = `
-    INSERT INTO posts (image_url, title, content, user_id)
-    VALUES (?, ?, ?, ?)`;
-
+  // 변경된 부분: SQL 쿼리 대신 Supabase insert 사용
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  return await db.run(query, [
-    post.imageUrl,
-    post.title,
-    post.content,
-    post.userId,
-  ]);
+
+  const { data, error } = await supabase
+    .from("posts")
+    .insert({
+      image_url: post.imageUrl,
+      title: post.title,
+      content: post.content,
+      user_id: post.userId,
+    })
+    .select();
+
+  if (error) {
+    console.error("Error storing post:", error);
+    throw new Error("게시물을 저장하는 중 오류가 발생했습니다");
+  }
+
+  return data[0];
 }
 
 export async function updatePostLikeStatus(postId, userId) {
-  const result = await db.get(
-    `
-    SELECT COUNT(*) AS count
-    FROM likes
-    WHERE user_id = ? AND post_id = ?`,
-    [userId, postId]
-  );
+  // 변경된 부분: 좋아요 상태 확인
+  const { data: likes, error: selectError } = await supabase
+    .from("likes")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("post_id", postId);
 
-  const isLiked = result.count === 0;
+  if (selectError) {
+    console.error("Error checking like status:", selectError);
+    throw new Error("좋아요 상태를 확인하는 중 오류가 발생했습니다");
+  }
 
+  const isLiked = likes.length === 0;
+
+  // 인위적인 지연 추가 (원래 코드와 동일하게 유지)
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
   if (isLiked) {
-    return await db.run(
-      `
-      INSERT INTO likes (user_id, post_id)
-      VALUES (?, ?)`,
-      [userId, postId]
-    );
+    // 좋아요 추가
+    const { error: insertError } = await supabase.from("likes").insert({
+      user_id: userId,
+      post_id: postId,
+    });
+
+    if (insertError) {
+      console.error("Error adding like:", insertError);
+      throw new Error("좋아요를 추가하는 중 오류가 발생했습니다");
+    }
   } else {
-    return await db.run(
-      `
-      DELETE FROM likes
-      WHERE user_id = ? AND post_id = ?`,
-      [userId, postId]
-    );
+    // 좋아요 제거
+    const { error: deleteError } = await supabase
+      .from("likes")
+      .delete()
+      .eq("user_id", userId)
+      .eq("post_id", postId);
+
+    if (deleteError) {
+      console.error("Error removing like:", deleteError);
+      throw new Error("좋아요를 제거하는 중 오류가 발생했습니다");
+    }
   }
+
+  return { success: true, isLiked };
 }
