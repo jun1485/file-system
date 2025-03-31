@@ -11,15 +11,7 @@ let db;
 export async function getPosts(maxNumber) {
   let query = supabase
     .from("posts")
-    .select(
-      `
-      id,
-      image_url as image,
-      title,
-      content,
-      created_at as createdAt
-    `
-    )
+    .select("id, image_url, title, content, created_at")
     .order("created_at", { ascending: false });
 
   if (maxNumber) {
@@ -44,10 +36,10 @@ export async function getPosts(maxNumber) {
   // 응답 데이터 형식 변환
   return data.map((post) => ({
     id: post.id,
-    image: post.image,
+    image: post.image_url,
     title: post.title,
     content: post.content,
-    createdAt: post.createdAt,
+    createdAt: post.created_at,
     userFirstName: "익명", // 임시값 추가
     userLastName: "", // 임시값 추가
     likes: 0, // 임시값 추가
@@ -59,14 +51,22 @@ export async function storePost(post) {
   // 변경된 부분: SQL 쿼리 대신 Supabase insert 사용
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
+  // 삽입할 데이터 객체 생성
+  const insertData = {
+    image_url: post.imageUrl,
+    title: post.title,
+    content: post.content,
+  };
+
+  // userId가 유효한 경우에만 user_id 필드 추가
+  // null이나 undefined인 경우 필드 자체를 제외
+  if (post.userId) {
+    insertData.user_id = post.userId;
+  }
+
   const { data, error } = await supabase
     .from("posts")
-    .insert({
-      image_url: post.imageUrl,
-      title: post.title,
-      content: post.content,
-      user_id: post.userId,
-    })
+    .insert(insertData)
     .select();
 
   if (error) {

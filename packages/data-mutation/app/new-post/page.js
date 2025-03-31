@@ -23,7 +23,7 @@ export default async function NewPostPage() {
         title,
         content,
         imageUrl,
-        userId: "anonymous",
+        userId: null,
       });
 
       return { success: true };

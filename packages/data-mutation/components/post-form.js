@@ -60,11 +60,24 @@ export default function PostForm({ action }) {
 
         formData.append("imageUrl", data.path);
       }
-      console.log(action(formData));
 
-      return action(formData);
+      console.log("폼 데이터 제출:", {
+        title: formData.get("title"),
+        content: formData.get("content"),
+        imageUrl: formData.get("imageUrl"),
+      });
+
+      try {
+        const result = await action(formData);
+        console.log("액션 결과:", result);
+        return result;
+      } catch (actionError) {
+        console.error("액션 실행 오류:", actionError);
+        return { errors: [actionError.message] };
+      }
     } catch (error) {
       console.error("Error uploading file:", error);
+      return { errors: [error.message] };
     }
   };
 
