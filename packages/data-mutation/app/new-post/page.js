@@ -3,37 +3,34 @@ import { storePost } from "@/lib/posts";
 import { redirect } from "next/navigation";
 
 export default async function NewPostPage() {
-  async function createPost(prevState, formData) {
+  async function createPost(formData) {
     "use server";
-    const title = formData.get("title");
-    const image = formData.get("image");
-    const content = formData.get("content");
 
-    let errors = [];
+    try {
+      if (!formData) {
+        return { errors: ["폼 데이터가 없습니다"] };
+      }
 
-    if (!title || title.trim().length === 0) {
-      errors.push("Title을 입력하세요");
+      const title = formData.get("title");
+      const content = formData.get("content");
+      const imageUrl = formData.get("imageUrl");
+
+      if (!title || !content) {
+        return { errors: ["제목과 내용은 필수입니다"] };
+      }
+
+      const result = await storePost({
+        title,
+        content,
+        imageUrl,
+        userId: "anonymous",
+      });
+
+      return { success: true };
+    } catch (error) {
+      console.error("Post creation error:", error);
+      return { errors: [error.message] };
     }
-
-    if (!content || content.trim().length === 0) {
-      errors.push("Content를 입력하세요");
-    }
-
-    if (!image || image.size === 0) {
-      errors.push("Image를 입력하세요");
-    }
-
-    if (errors.length > 0) {
-      return { errors };
-    }
-
-    await storePost({
-      imageUrl: "",
-      title,
-      content,
-      userId: 1,
-    });
-    redirect("/");
   }
 
   return <PostForm action={createPost} />;
