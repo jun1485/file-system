@@ -3,7 +3,7 @@
 import { useFormState } from "react-dom";
 import FormSubmit from "./form-submit";
 import { createClient } from "@supabase/supabase-js";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -13,6 +13,32 @@ const supabase = createClient(
 export default function PostForm({ action }) {
   const [state, formAction, isPending] = useFormState(action, null);
   const [previewImage, setPreviewImage] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState("확인 중...");
+
+  useEffect(() => {
+    // 서버 연결 확인을 위한 비동기 함수
+    const checkConnection = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("posts")
+          .select("id")
+          .limit(1);
+
+        if (error) {
+          console.error("Supabase 연결 오류:", error);
+          setConnectionStatus(`연결 실패: ${error.message}`);
+        } else {
+          console.log("Supabase 연결 성공! 데이터:", data);
+          setConnectionStatus("연결 성공");
+        }
+      } catch (e) {
+        console.error("예상치 못한 오류 발생:", e);
+        setConnectionStatus(`오류 발생: ${e.message}`);
+      }
+    };
+
+    checkConnection();
+  }, []);
 
   const handleImageChange = (event) => {
     const file = event.target.files?.[0];
@@ -34,6 +60,7 @@ export default function PostForm({ action }) {
 
         formData.append("imageUrl", data.path);
       }
+      console.log(action(formData));
 
       return action(formData);
     } catch (error) {
@@ -44,6 +71,7 @@ export default function PostForm({ action }) {
   return (
     <>
       <h1>Create a new post</h1>
+      <p>Supabase 상태: {connectionStatus}</p>
       <form action={handleSubmit}>
         <p className="form-control">
           <label htmlFor="title">Title</label>
