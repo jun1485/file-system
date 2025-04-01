@@ -5,6 +5,10 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
+  images: {
+    domains: ["firebasestorage.googleapis.com"],
+    formats: ["image/avif", "image/webp"],
+  },
 };
 
 module.exports = nextConfig;

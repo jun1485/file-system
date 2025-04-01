@@ -50,8 +50,7 @@ export default function RSVP() {
               <div className="max-w-md mx-auto">
                 <p className="text-center text-gray-600 mb-8">
                   2024년 12월 1일 일요일 오후 2시
-                  <br />
-                  그랜드 호텔 서울
+                  <br />더 링크 호텔 서울
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-6">

@@ -1,12 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import NavigationMenu from "./component/navigation/navigation-menu";
 import { useEffect, useState } from "react";
 
 export default function Home() {
   // 결혼식까지 남은 날짜 계산
   const [daysLeft, setDaysLeft] = useState<number>(0);
-  const weddingDate = new Date("2024-12-01T14:00:00");
+  const weddingDate = new Date("2026-04-01T14:00:00");
 
   useEffect(() => {
     const today = new Date();
@@ -32,14 +33,22 @@ export default function Home() {
         {/* 결혼식까지 남은 날짜 */}
         <div className="bg-pink-50 py-3 text-center">
           <span className="text-pink-500 font-medium">
-            결혼식까지{" "}
-            {daysLeft > 0 ? `${daysLeft}일 남았습니다` : "오늘이 결혼식입니다!"}
+            {daysLeft > 0
+              ? `결혼식까지 ${daysLeft}일 남았습니다.`
+              : "오늘이 결혼식입니다!"}
           </span>
         </div>
 
-        {/* 메인 이미지 - 임시로 텍스트로 대체 */}
-        <div className="relative w-full h-[450px] bg-gray-200 flex items-center justify-center">
-          <p className="text-gray-600">웨딩 이미지가 여기에 표시됩니다</p>
+        {/* 메인 이미지 */}
+        <div className="relative w-full h-[450px]">
+          <Image
+            src="/wedding-placeholder.jpg"
+            alt="웨딩 이미지"
+            fill
+            style={{ objectFit: "cover" }}
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
         </div>
 
         {/* 내비게이션 메뉴 */}
