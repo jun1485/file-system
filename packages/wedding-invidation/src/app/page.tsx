@@ -1,103 +1,131 @@
-import Image from "next/image";
+"use client";
+
+import NavigationMenu from "./component/navigation/navigation-menu";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  // 결혼식까지 남은 날짜 계산
+  const [daysLeft, setDaysLeft] = useState<number>(0);
+  const weddingDate = new Date("2024-12-01T14:00:00");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    const today = new Date();
+    const diffTime = weddingDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    setDaysLeft(diffDays);
+  }, []);
+
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-between p-4 md:p-24 bg-background text-foreground">
+      <div className="max-w-3xl w-full bg-card-bg rounded-xl shadow-lg overflow-hidden">
+        {/* 청첩장 헤더 */}
+        <div className="wedding-gradient text-center p-10 text-white shadow-inner">
+          <h1 className="text-4xl font-serif mb-3 font-medium">
+            주정준 & 이인영
+          </h1>
+          <p className="text-lg">우리의 결혼을 알려드립니다</p>
+          <div className="mt-6 inline-block px-6 py-2 bg-white/30 backdrop-blur-sm rounded-full text-white">
+            2024년 12월 1일 일요일 오후 2시
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        {/* 결혼식까지 남은 날짜 */}
+        <div className="bg-pink-50 py-3 text-center">
+          <span className="text-pink-500 font-medium">
+            결혼식까지{" "}
+            {daysLeft > 0 ? `${daysLeft}일 남았습니다` : "오늘이 결혼식입니다!"}
+          </span>
+        </div>
+
+        {/* 메인 이미지 - 임시로 텍스트로 대체 */}
+        <div className="relative w-full h-[450px] bg-gray-200 flex items-center justify-center">
+          <p className="text-gray-600">웨딩 이미지가 여기에 표시됩니다</p>
+        </div>
+
+        {/* 내비게이션 메뉴 */}
+        <NavigationMenu />
+
+        {/* 메인 콘텐츠 */}
+        <div className="p-10">
+          <div className="section-title">초대합니다</div>
+          <p className="my-8 text-center leading-7 text-gray-700">
+            서로 다른 길을 걸어온 저희 두 사람이
+            <br />
+            이제 같은 길을 함께 걷고자 합니다.
+            <br />
+            <br />
+            귀한 걸음 하시어 축복해 주시면
+            <br />
+            더없는 기쁨으로 간직하겠습니다.
+          </p>
+
+          <div className="mt-16 flex flex-col md:flex-row gap-8 justify-center">
+            <div className="flex-1 card p-6 text-center">
+              <div className="w-20 h-20 rounded-full bg-pink-100 mx-auto mb-4 flex items-center justify-center">
+                <span className="text-pink-500 text-2xl font-serif">신랑</span>
+              </div>
+              <p className="font-medium text-lg">주정준</p>
+              <p className="mt-1 text-gray-500">### & ### 의 아들</p>
+              <a
+                href="tel:010-0000-0000"
+                className="mt-4 inline-block btn-secondary text-sm"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 inline mr-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
+                </svg>
+                연락하기
+              </a>
+            </div>
+
+            <div className="flex-1 card p-6 text-center">
+              <div className="w-20 h-20 rounded-full bg-purple-100 mx-auto mb-4 flex items-center justify-center">
+                <span className="text-purple-500 text-2xl font-serif">
+                  신부
+                </span>
+              </div>
+              <p className="font-medium text-lg">이인영</p>
+              <p className="mt-1 text-gray-500">### & ### 의 딸</p>
+              <a
+                href="tel:010-0000-0000"
+                className="mt-4 inline-block btn-secondary text-sm"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 inline mr-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                  />
+                </svg>
+                연락하기
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* 푸터 */}
+        <div className="bg-gray-100 p-5 text-center text-sm text-gray-600 border-t border-gray-200">
+          <p>© 2024 주정준 & 이인영의 결혼식</p>
+          <p className="mt-1 text-xs text-gray-500">함께 해주셔서 감사합니다</p>
+        </div>
+      </div>
+    </main>
   );
 }
