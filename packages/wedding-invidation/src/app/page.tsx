@@ -26,7 +26,7 @@ export default function Home() {
           </h1>
           <p className="text-lg">우리의 결혼을 알려드립니다</p>
           <div className="mt-6 inline-block px-6 py-2 bg-white/30 backdrop-blur-sm rounded-full text-white">
-            2024년 12월 1일 일요일 오후 2시
+            2026년 4월 1일 일요일 오후 3시
           </div>
         </div>
 

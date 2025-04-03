@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import {
   fetchGalleryImages,
   GalleryImage,
@@ -13,15 +12,27 @@ export default function AdminPage() {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState("전체");
+  const [error, setError] = useState<string | null>(null);
+  const [debugInfo, setDebugInfo] = useState<string>("");
 
   // 이미지 불러오기
   const loadImages = async () => {
     setIsLoading(true);
+    setError(null);
+    setDebugInfo("이미지 로딩 중...");
+
     try {
       const fetchedImages = await fetchGalleryImages();
       setImages(fetchedImages);
+      setDebugInfo(`${fetchedImages.length}개의 이미지를 로드했습니다.`);
     } catch (error) {
       console.error("이미지 로딩 오류:", error);
+      setError("이미지를 불러오는 중 오류가 발생했습니다.");
+      setDebugInfo(
+        `오류: ${
+          error instanceof Error ? error.message : JSON.stringify(error)
+        }`
+      );
     } finally {
       setIsLoading(false);
     }
@@ -38,6 +49,9 @@ export default function AdminPage() {
       ? images
       : images.filter((img) => img.category === filter);
 
+  // 개발 환경 체크
+  const isDevelopment = process.env.NODE_ENV === "development";
+
   return (
     <main className="flex min-h-screen flex-col items-center p-4 md:p-12 bg-background">
       <div className="max-w-5xl w-full bg-card-bg rounded-xl shadow-lg overflow-hidden">
@@ -50,10 +64,27 @@ export default function AdminPage() {
         {/* 내비게이션 메뉴 */}
         <NavigationMenu />
 
+        {/* 환경 정보 */}
+        {isDevelopment && (
+          <div className="bg-yellow-100 border-l-4 border-yellow-500 p-4 mb-4 mx-6 mt-4">
+            <p className="text-yellow-700 font-medium">
+              개발 환경 (Development)
+            </p>
+            <p className="text-sm text-yellow-600">{debugInfo}</p>
+          </div>
+        )}
+
+        {/* 오류 표시 */}
+        {error && (
+          <div className="bg-red-100 border-l-4 border-red-500 p-4 mb-4 mx-6">
+            <p className="text-red-700">{error}</p>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
           {/* 이미지 업로더 */}
           <div className="md:col-span-1">
-            <ImageUploader />
+            <ImageUploader onUploadSuccess={loadImages} />
             <button
               onClick={loadImages}
               className="mt-4 w-full py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-md"
@@ -96,11 +127,10 @@ export default function AdminPage() {
                       className="border rounded-lg overflow-hidden"
                     >
                       <div className="aspect-video relative">
-                        <Image
+                        <img
                           src={image.src}
                           alt={image.alt}
-                          fill
-                          style={{ objectFit: "cover" }}
+                          className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="p-3">
@@ -113,6 +143,11 @@ export default function AdminPage() {
                           </span>
                         </div>
                         <p className="mt-2 text-sm truncate">{image.alt}</p>
+                        {isDevelopment && (
+                          <p className="mt-1 text-xs text-gray-400 truncate">
+                            ID: {image.id}
+                          </p>
+                        )}
                       </div>
                     </div>
                   ))}
