@@ -1,7 +1,7 @@
 "use client";
 
-import NavigationMenu from "../app/component/navigation/navigation-menu";
 import Image from "next/image";
+import NavigationMenu from "../component/navigation/navigation-menu";
 
 export default function Location() {
   // 교통 수단 정보
@@ -96,11 +96,8 @@ export default function Location() {
                   </div>
                 </div>
                 <div className="w-full md:w-2/3 space-y-2">
-                  <h3 className="text-xl font-medium">그랜드 호텔 서울</h3>
-                  <p className="text-gray-700">3층 그랜드볼룸</p>
-                  <p className="text-gray-600">
-                    서울특별시 강남구 테헤란로 123
-                  </p>
+                  <h3 className="text-xl font-medium">더 링크 호텔 서울</h3>
+                  <p className="text-gray-600">서울특별시 ~~~~~~~~~</p>
                   <p className="text-gray-600">
                     <span className="inline-block bg-gray-100 px-2 py-1 rounded mr-2 text-sm">
                       전화

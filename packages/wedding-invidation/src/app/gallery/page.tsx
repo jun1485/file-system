@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import NavigationMenu from "../component/navigation/navigation-menu";
 import { useState, useEffect } from "react";
 import {
@@ -10,23 +9,28 @@ import {
 
 export default function Gallery() {
   // 이미지 상태 관리
-  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   // 선택된 이미지 상태
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   // 필터 상태
   const [filter, setFilter] = useState("전체");
+  // 에러 상태 추가
+  const [error, setError] = useState<string | null>(null);
 
   // 이미지 불러오기
   useEffect(() => {
     const loadImages = async () => {
-      setIsLoading(true);
       try {
-        // Firebase에서 이미지 가져오기
-        const fetchedImages = await fetchGalleryImages();
-        setImages(fetchedImages);
-      } catch (error) {
-        console.error("이미지 로딩 오류:", error);
+        setIsLoading(true);
+        setError(null);
+        console.log("갤러리 이미지 로딩 시작");
+        const images = await fetchGalleryImages();
+        console.log("갤러리 이미지 로딩 완료:", images.length + "개");
+        setGalleryImages(images);
+      } catch (err) {
+        console.error("갤러리 이미지 로딩 실패:", err);
+        setError("이미지를 불러오는 중 오류가 발생했습니다.");
       } finally {
         setIsLoading(false);
       }
@@ -38,8 +42,50 @@ export default function Gallery() {
   // 필터링된 이미지
   const filteredImages =
     filter === "전체"
-      ? images
-      : images.filter((img) => img.category === filter);
+      ? galleryImages
+      : galleryImages.filter((img) => img.category === filter);
+
+  // 이미지 클릭 핸들러
+  const handleImageClick = (image: GalleryImage) => {
+    setSelectedImage(image);
+  };
+
+  // 이미지 로드 오류 핸들러
+  const handleImageError = (
+    e: React.SyntheticEvent<HTMLImageElement, Event>,
+    image: GalleryImage
+  ) => {
+    console.error("이미지 로드 실패:", image.src);
+    e.currentTarget.src =
+      "https://via.placeholder.com/800x600?text=이미지+로드+실패";
+    e.currentTarget.alt = "이미지를 불러올 수 없습니다";
+  };
+
+  // 날짜를 문자열로 변환하는 함수
+  const getDateString = (timestamp: number): string => {
+    return new Date(timestamp).toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  // 로딩 및 오류 UI
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-lg">이미지를 불러오는 중...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-lg text-red-500">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center p-4 md:p-24 bg-background">
@@ -71,29 +117,26 @@ export default function Gallery() {
         </div>
 
         {/* 갤러리 그리드 */}
-        {isLoading ? (
-          <div className="flex justify-center items-center p-12">
-            <p className="text-gray-500">이미지를 불러오는 중...</p>
-          </div>
-        ) : filteredImages.length > 0 ? (
+        {filteredImages.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
             {filteredImages.map((image) => (
               <div
                 key={image.id}
-                className="aspect-square relative rounded-lg overflow-hidden shadow cursor-pointer transform hover:scale-105 transition-all duration-300"
-                onClick={() => setSelectedImage(image)}
+                className="rounded-lg overflow-hidden shadow-md hover:shadow-xl transition duration-300 cursor-pointer"
+                onClick={() => handleImageClick(image)}
               >
-                <Image
+                <img
                   src={image.src}
                   alt={image.alt}
-                  fill
-                  style={{ objectFit: "cover" }}
-                  className="hover:opacity-90"
+                  className="w-full h-64 object-cover hover:scale-105 transition duration-300"
+                  loading="lazy"
+                  onError={(e) => handleImageError(e, image)}
                 />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
-                  <span className="text-white text-xs font-medium px-2 py-1 rounded-full bg-black/30">
-                    {image.category}
-                  </span>
+                <div className="p-4">
+                  <p className="text-gray-700">{image.alt}</p>
+                  <p className="text-sm text-gray-500">
+                    {getDateString(image.createdAt)}
+                  </p>
                 </div>
               </div>
             ))}
@@ -133,12 +176,12 @@ export default function Gallery() {
                   />
                 </svg>
               </button>
-              <div className="relative w-full h-full">
-                <Image
+              <div className="relative w-full h-full flex items-center justify-center">
+                {/* 팝업에도 일반 img 태그 사용 */}
+                <img
                   src={selectedImage.src}
                   alt={selectedImage.alt}
-                  fill
-                  style={{ objectFit: "contain" }}
+                  className="max-w-full max-h-full object-contain"
                 />
               </div>
             </div>

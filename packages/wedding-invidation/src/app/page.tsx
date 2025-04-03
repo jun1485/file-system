@@ -42,7 +42,7 @@ export default function Home() {
         {/* 메인 이미지 */}
         <div className="relative w-full h-[450px]">
           <Image
-            src="/wedding-placeholder.jpg"
+            src="https://firebasestorage.googleapis.com/v0/b/wedding-invitation-c4b0d.firebasestorage.app/o/galleries%2FChatGPT_Image_2025_1743585856385?alt=media&token=bd8de381-2c1e-424b-b6e2-81f2b57aa1e4"
             alt="웨딩 이미지"
             fill
             style={{ objectFit: "cover" }}
