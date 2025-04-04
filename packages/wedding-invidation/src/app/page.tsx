@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 export default function Home() {
   // 결혼식까지 남은 날짜 계산
   const [daysLeft, setDaysLeft] = useState<number>(0);
-  const weddingDate = new Date("2026-04-01T14:00:00");
+  const weddingDate = new Date("2026-05-16T14:00:00");
 
   useEffect(() => {
     const today = new Date();
@@ -26,7 +26,7 @@ export default function Home() {
           </h1>
           <p className="text-lg">우리의 결혼을 알려드립니다</p>
           <div className="mt-6 inline-block px-6 py-2 bg-white/30 backdrop-blur-sm rounded-full text-white">
-            2026년 4월 1일 일요일 오후 3시
+            2026년 5월 16일 토요일 오후 3시
           </div>
         </div>
 

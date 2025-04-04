@@ -2,6 +2,7 @@
 
 import NavigationMenu from "../component/navigation/navigation-menu";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   fetchGalleryImages,
   GalleryImage,
@@ -17,6 +18,8 @@ export default function Gallery() {
   const [filter, setFilter] = useState("전체");
   // 에러 상태 추가
   const [error, setError] = useState<string | null>(null);
+  // 이미지 로딩 상태 관리
+  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
   // 이미지 불러오기
   useEffect(() => {
@@ -50,15 +53,12 @@ export default function Gallery() {
     setSelectedImage(image);
   };
 
-  // 이미지 로드 오류 핸들러
-  const handleImageError = (
-    e: React.SyntheticEvent<HTMLImageElement, Event>,
-    image: GalleryImage
-  ) => {
-    console.error("이미지 로드 실패:", image.src);
-    e.currentTarget.src =
-      "https://via.placeholder.com/800x600?text=이미지+로드+실패";
-    e.currentTarget.alt = "이미지를 불러올 수 없습니다";
+  // Next.js의 Image 컴포넌트를 위한 오류 처리 설정
+  const imageProps = {
+    unoptimized: true, // 외부 이미지 최적화 문제를 방지
+    onError: () => {
+      console.error("이미지 로드 실패");
+    },
   };
 
   // 날짜를 문자열로 변환하는 함수
@@ -70,11 +70,22 @@ export default function Gallery() {
     });
   };
 
+  // 이미지 로딩 완료 핸들러
+  const handleImageLoaded = (id: string) => {
+    setLoadedImages((prev) => ({
+      ...prev,
+      [id]: true,
+    }));
+  };
+
   // 로딩 및 오류 UI
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p className="text-lg">이미지를 불러오는 중...</p>
+        <div className="flex flex-col items-center">
+          <div className="w-12 h-12 border-4 border-gray-200 border-t-pink-500 rounded-full animate-spin mb-4"></div>
+          <p className="text-lg">이미지를 불러오는 중...</p>
+        </div>
       </div>
     );
   }
@@ -125,13 +136,26 @@ export default function Gallery() {
                 className="rounded-lg overflow-hidden shadow-md hover:shadow-xl transition duration-300 cursor-pointer"
                 onClick={() => handleImageClick(image)}
               >
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  className="w-full h-64 object-cover hover:scale-105 transition duration-300"
-                  loading="lazy"
-                  onError={(e) => handleImageError(e, image)}
-                />
+                <div className="relative w-full h-64">
+                  {!loadedImages[image.id] && (
+                    <div className="absolute inset-0 flex justify-center items-center bg-gray-50">
+                      <div className="w-10 h-10 border-4 border-gray-200 border-t-pink-500 rounded-full animate-spin"></div>
+                    </div>
+                  )}
+                  <Image
+                    src={image.src}
+                    alt={image.alt}
+                    width={500}
+                    height={350}
+                    className={`w-full h-full object-cover hover:scale-105 transition duration-300 ${
+                      !loadedImages[image.id] ? "opacity-0" : "opacity-100"
+                    }`}
+                    placeholder="blur"
+                    blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2ZkZTZmMSIvPjwvc3ZnPg=="
+                    onLoadingComplete={() => handleImageLoaded(image.id)}
+                    {...imageProps}
+                  />
+                </div>
                 <div className="p-4">
                   <p className="text-gray-700">{image.alt}</p>
                   <p className="text-sm text-gray-500">
@@ -177,11 +201,27 @@ export default function Gallery() {
                 </svg>
               </button>
               <div className="relative w-full h-full flex items-center justify-center">
-                {/* 팝업에도 일반 img 태그 사용 */}
-                <img
+                {!loadedImages[`popup-${selectedImage.id}`] && (
+                  <div className="absolute inset-0 flex justify-center items-center">
+                    <div className="w-16 h-16 border-4 border-gray-200 border-t-pink-500 rounded-full animate-spin"></div>
+                  </div>
+                )}
+                <Image
                   src={selectedImage.src}
                   alt={selectedImage.alt}
-                  className="max-w-full max-h-full object-contain"
+                  width={1000}
+                  height={800}
+                  className={`max-w-full max-h-full object-contain ${
+                    !loadedImages[`popup-${selectedImage.id}`]
+                      ? "opacity-0"
+                      : "opacity-100"
+                  }`}
+                  placeholder="blur"
+                  blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2ZkZTZmMSIvPjwvc3ZnPg=="
+                  onLoadingComplete={() =>
+                    handleImageLoaded(`popup-${selectedImage.id}`)
+                  }
+                  {...imageProps}
                 />
               </div>
             </div>
