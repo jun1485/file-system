@@ -6,7 +6,8 @@ import {
   GalleryImage,
 } from "../../services/gallery-service";
 import ImageUploader from "../component/ImageUploader";
-import NavigationMenu from "../component/navigation/navigation-menu";
+import { Footer } from "../component/footer";
+import { NavigationMenu } from "../component/navigation";
 
 export default function AdminPage() {
   const [images, setImages] = useState<GalleryImage[]>([]);
@@ -161,11 +162,7 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* 푸터 */}
-        <div className="bg-gray-100 p-5 text-center text-sm text-gray-600 border-t border-gray-200">
-          <p>© 2024 주정준 & 이인영의 결혼식</p>
-          <p className="mt-1 text-xs text-gray-500">관리자 페이지</p>
-        </div>
+        <Footer />
       </div>
     </main>
   );

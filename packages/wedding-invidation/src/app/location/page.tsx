@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import NavigationMenu from "../component/navigation/navigation-menu";
+import { Footer } from "../component/footer";
+import { NavigationMenu } from "../component/navigation";
 
 export default function Location() {
   // 교통 수단 정보
@@ -136,11 +137,7 @@ export default function Location() {
           </div>
         </div>
 
-        {/* 푸터 */}
-        <div className="bg-gray-100 p-5 text-center text-sm text-gray-600 border-t border-gray-200">
-          <p>© 2024 주정준 & 이인영의 결혼식</p>
-          <p className="mt-1 text-xs text-gray-500">함께 해주셔서 감사합니다</p>
-        </div>
+        <Footer />
       </div>
     </main>
   );

@@ -1,12 +1,13 @@
 "use client";
 
-import NavigationMenu from "../component/navigation/navigation-menu";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   fetchGalleryImages,
   GalleryImage,
 } from "../../services/gallery-service";
+import { Footer } from "../component/footer";
+import { NavigationMenu } from "../component/navigation";
 
 export default function Gallery() {
   // 이미지 상태 관리
@@ -228,11 +229,7 @@ export default function Gallery() {
           </div>
         )}
 
-        {/* 푸터 */}
-        <div className="bg-gray-100 p-5 text-center text-sm text-gray-600 border-t border-gray-200">
-          <p>© 2024 주정준 & 이인영의 결혼식</p>
-          <p className="mt-1 text-xs text-gray-500">함께 해주셔서 감사합니다</p>
-        </div>
+        <Footer />
       </div>
     </main>
   );

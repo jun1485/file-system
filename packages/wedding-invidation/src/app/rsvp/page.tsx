@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, ChangeEvent, FormEvent } from "react";
-import NavigationMenu from "../component/navigation/navigation-menu";
+import { Footer } from "../component/footer";
+import { NavigationMenu } from "../component/navigation";
 
 export default function RSVP() {
   const [formData, setFormData] = useState({
@@ -51,7 +52,7 @@ export default function RSVP() {
                 <p className="text-center text-gray-600 mb-8">
                   2024년 12월 1일 일요일 오후 2시
                   <br />
-                  신도림 더 링크 호텔
+                  신도림 더 링크 호텔 웨딩
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -215,11 +216,7 @@ export default function RSVP() {
           )}
         </div>
 
-        {/* 푸터 */}
-        <div className="bg-gray-100 p-5 text-center text-sm text-gray-600 border-t border-gray-200">
-          <p>© 2024 주정준 & 이인영의 결혼식</p>
-          <p className="mt-1 text-xs text-gray-500">함께 해주셔서 감사합니다</p>
-        </div>
+        <Footer />
       </div>
     </main>
   );
