@@ -1,4 +1,4 @@
-import { DUMMY_NEWS } from "@/app/dummy/dummy-news";
+import { DUMMY_NEWS } from "../app/dummy/dummy-news";
 
 export function getAllNews() {
   return DUMMY_NEWS;
