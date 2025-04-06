@@ -50,7 +50,7 @@ export default function RSVP() {
             <>
               <div className="max-w-md mx-auto">
                 <p className="text-center text-gray-600 mb-8">
-                  2024년 12월 1일 일요일 오후 2시
+                  2026년 5월 16일 토요일 오후 3시
                   <br />
                   신도림 더 링크 호텔 웨딩
                 </p>
