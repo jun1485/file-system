@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { NavigationMenu } from "./component/navigation";
 import { Footer } from "./component/footer";
 import { getMainImageUrl } from "../services/settings-service";
+import { AudioPlayBtn } from "./component/button";
 
 export default function Home() {
   // 결혼식까지 남은 날짜 계산
@@ -50,6 +51,8 @@ export default function Home() {
             2026년 5월 16일 토요일 오후 3시
           </div>
         </div>
+
+        <AudioPlayBtn />
 
         {/* 결혼식까지 남은 날짜 */}
         <div className="bg-pink-50 py-3 text-center">
