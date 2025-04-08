@@ -6,23 +6,18 @@ import { NavigationMenu } from "./component/navigation";
 import { Footer } from "./component/footer";
 import { getMainImageUrl } from "../services/settings-service";
 import { AudioPlayBtn } from "./component/button";
+import { weddingDateState, remainingDaysState } from "./recoil/atoms/wedding";
+import { useRecoilValue } from "recoil";
 
 export default function Home() {
-  // 결혼식까지 남은 날짜 계산
-  const [daysLeft, setDaysLeft] = useState<number>(0);
-  const weddingDate = new Date("2026-05-16T14:00:00");
+  const weddingDate = useRecoilValue(weddingDateState);
+  const remainingDays = useRecoilValue(remainingDaysState);
   // 메인 이미지 URL 상태 추가
   const [mainImageUrl, setMainImageUrl] = useState<string>(
     "https://firebasestorage.googleapis.com/v0/b/wedding-invitation-c4b0d.firebasestorage.app/o/galleries%2FChatGPT_Image_2025_1743585856385?alt=media&token=bd8de381-2c1e-424b-b6e2-81f2b57aa1e4"
   );
 
   useEffect(() => {
-    // 결혼식까지 남은 날짜 계산
-    const today = new Date();
-    const diffTime = weddingDate.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    setDaysLeft(diffDays);
-
     // 메인 이미지 URL 가져오기
     const loadMainImageUrl = async () => {
       try {
@@ -57,8 +52,8 @@ export default function Home() {
         {/* 결혼식까지 남은 날짜 */}
         <div className="bg-pink-50 py-3 text-center">
           <span className="text-pink-500 font-medium">
-            {daysLeft > 0
-              ? `결혼식까지 ${daysLeft}일 남았습니다.`
+            {remainingDays > 0
+              ? `결혼식까지 ${remainingDays}일 남았습니다.`
               : "오늘이 결혼식입니다!"}
           </span>
         </div>
