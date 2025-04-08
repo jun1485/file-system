@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { uploadImage } from "../../services/gallery-service";
+import { uploadMainImage } from "../../services/settings-service";
 import Image from "next/image";
 
 interface MainImageUploaderProps {
@@ -47,12 +47,8 @@ export default function MainImageUploader({
       setIsUploading(true);
       setMessage({ text: "메인 이미지 업로드 중...", type: "info" });
 
-      // Firebase에 이미지 업로드
-      const uploadedImage = await uploadImage(
-        file,
-        "메인이미지",
-        "웨딩 메인 이미지"
-      );
+      // settings-service의 uploadMainImage 사용하여 메인 이미지 교체
+      const imageUrl = await uploadMainImage(file);
 
       setMessage({
         text: "메인 이미지가 성공적으로 업로드되었습니다.",
@@ -61,7 +57,7 @@ export default function MainImageUploader({
 
       // 성공 콜백 호출
       if (onUploadSuccess) {
-        onUploadSuccess(uploadedImage.src);
+        onUploadSuccess(imageUrl);
       }
 
       // 폼 초기화 (미리보기는 유지)

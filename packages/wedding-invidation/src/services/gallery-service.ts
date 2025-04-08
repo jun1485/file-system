@@ -5,6 +5,7 @@ import { collection, addDoc, getDocs } from "firebase/firestore";
 import { initializeApp, getApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 import { getFirestore } from "firebase/firestore";
+import { getMainImageUrl } from "./settings-service";
 
 // 클라이언트에서 Firebase 초기화
 function initClientFirebase() {
@@ -214,10 +215,8 @@ export async function uploadImage(
 // 모든 갤러리 이미지 가져오기
 export const fetchGalleryImages = async (): Promise<GalleryImage[]> => {
   // 디버깅: 함수 호출 확인
-  console.log("fetchGalleryImages 함수 호출됨");
 
   if (useLocalDataMode) {
-    console.log("로컬 데이터 모드 - 이미지 목록 반환");
     await new Promise((resolve) => setTimeout(resolve, 500));
     return LOCAL_IMAGES;
   }
@@ -226,7 +225,8 @@ export const fetchGalleryImages = async (): Promise<GalleryImage[]> => {
   const localBackupImages = LOCAL_IMAGES;
 
   try {
-    console.log("Firestore에서 갤러리 이미지 조회 시도");
+    // 메인 이미지 URL 가져오기
+    const mainImageUrl = await getMainImageUrl();
 
     // 1. Firestore 연결 확인
     if (!db) {
@@ -236,12 +236,9 @@ export const fetchGalleryImages = async (): Promise<GalleryImage[]> => {
 
     // 2. 콜렉션 참조 생성
     const galleryCollectionRef = collection(db, "gallery");
-    console.log("갤러리 콜렉션 참조 생성:", galleryCollectionRef);
 
     // 3. 쿼리 실행
-    console.log("Firestore 쿼리 실행 시작");
     const querySnapshot = await getDocs(galleryCollectionRef);
-    console.log("Firestore 쿼리 완료:", querySnapshot.size, "개 문서");
 
     // 4. 결과 처리
     if (querySnapshot.empty) {
@@ -249,20 +246,24 @@ export const fetchGalleryImages = async (): Promise<GalleryImage[]> => {
       return localBackupImages;
     }
 
-    // 5. 문서 데이터 변환
+    // 5. 문서 데이터 변환 및 필터링
     const images: GalleryImage[] = [];
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      images.push({
-        id: doc.id,
-        src: data.src || "https://via.placeholder.com/800x600",
-        alt: data.alt || "웨딩 사진",
-        category: data.category || "웨딩촬영",
-        createdAt: data.createdAt || Date.now(),
-      });
-    });
+      const imageUrl = data.src || "";
 
-    console.log("변환된 이미지 데이터:", images.length, "개");
+      // 메인 이미지 URL과 다른 이미지만 추가
+
+      if (imageUrl !== mainImageUrl) {
+        images.push({
+          id: doc.id,
+          src: imageUrl || "https://via.placeholder.com/800x600",
+          alt: data.alt || "웨딩 사진",
+          category: data.category || "웨딩촬영",
+          createdAt: data.createdAt || Date.now(),
+        });
+      }
+    });
 
     // 6. 이미지 배열 반환
     return images.length > 0 ? images : localBackupImages;
@@ -278,6 +279,9 @@ export const fetchGalleryImages = async (): Promise<GalleryImage[]> => {
         return localBackupImages;
       }
 
+      // 메인 이미지 URL 다시 가져오기 (오류 시)
+      const mainImageUrl = await getMainImageUrl();
+
       const galleryRef = ref(storage, "galleries");
       const listResult = await listAll(galleryRef);
 
@@ -291,13 +295,17 @@ export const fetchGalleryImages = async (): Promise<GalleryImage[]> => {
         listResult.items.map(async (item, index) => {
           try {
             const url = await getDownloadURL(item);
-            return {
-              id: `storage-${index}`,
-              src: url,
-              alt: "Storage 이미지",
-              category: "웨딩촬영",
-              createdAt: Date.now() - index * 86400000,
-            };
+            // 메인 이미지 URL과 다른 이미지만 반환
+            if (url !== mainImageUrl) {
+              return {
+                id: `storage-${index}`,
+                src: url,
+                alt: "Storage 이미지",
+                category: "웨딩촬영",
+                createdAt: Date.now() - index * 86400000,
+              };
+            }
+            return null; // 메인 이미지는 null 반환
           } catch (dlError) {
             console.error("이미지 URL 가져오기 오류:", dlError);
             return null;

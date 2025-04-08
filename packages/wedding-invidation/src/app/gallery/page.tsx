@@ -30,7 +30,7 @@ export default function Gallery() {
         setError(null);
         console.log("갤러리 이미지 로딩 시작");
         const images = await fetchGalleryImages();
-        console.log("갤러리 이미지 로딩 완료:", images.length + "개");
+        console.log("갤러리 이미지 로딩 완료:", images);
         setGalleryImages(images);
       } catch (err) {
         console.error("갤러리 이미지 로딩 실패:", err);
